@@ -20,9 +20,9 @@ export default function Auth() {
 
     return (
         <div className="row flex flex-center">
-            <a className="alignCentral" href='https://github.com/Ceslusbel/Recordatorios'>GitHub</a>
+            
             <div className="col-6 form-widget">
-                <h1 className="header">Supabase + React</h1>
+            <a className="Header" href='https://github.com/Ceslusbel/Recordatorios'>GitHub</a>
                 <p className="description">Sign in via magic link with your email below</p>
                 <div>
                     <input
