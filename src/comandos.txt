@@ -1,0 +1,7 @@
+
+npx create-react-app crud-supabas --template cra-template-pwa
+npm install @supabase/supabase-js@latest
+npm install react-i18next i18next --save
+npm install i18next-browser-languagedetector
+npm install @mui/material @emotion/react @emotion/styled
+npm install @mui/icons-material
