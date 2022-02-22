@@ -2,7 +2,7 @@ import './index.css'
 import { useState, useEffect } from 'react'
 import { supabase } from './config/supabase'
 import Auth from './components/auth'
-import Account from './components/account'
+import Account from './components/profile'
 
 
 export default function Home() {
