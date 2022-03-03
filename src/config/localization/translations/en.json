@@ -18,17 +18,20 @@
     "footertable":"Rows per page: ",
     "padding":"Dense Padding",
     "button4":"Search",
-    "field4":"Title",
-    "field5":"Content",
-    "field6":"Reminder at",
+    "field4":"Number of Characters",
+    "field5":"Include Symbols?",
+    "field6":"Include Numbers?",
+    "field7":"Include capital letters?",
+    "field10":"Site",
+    "field11":"Password",
     "button5":"New insert",
     "button5v2":"Update",
     "button6":"Delete",
     "field8":"Search and modify records",
     "field9":"Record list",
     "record1":"ID:",
-    "record2":"Title:",
-    "record3":"Content:",
-    "record4":"Reminder date:",
+    "record2":"Site:",
+    "record3":"Password:",
     "record5":"Created_at:"
-}
+    
+}  

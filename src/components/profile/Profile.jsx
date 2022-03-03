@@ -1,26 +1,38 @@
 import i18next from '../../config/localization/i18n';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from "../avatar";
 import { supabase } from '../../config/supabase';
+import styled from 'styled-components';
+import {BotonDisminuir,BotonIncrementar,BotonCheck, BotonGenerar} from '../botones';
+import generarPassword from '../../funciones/generarPassword';
+import bcrypt from 'bcryptjs';
+
 
 export default function Account({ session }) {
     const [loading, setLoading] = useState(true)
     const [username, setUsername] = useState(null)
     const [website, setWebsite] = useState(null)
     const [avatar_url, setAvatarUrl] = useState(null)
-    const [content, setContent] = useState(null);
-    const [title, setTitle] = useState(null);
-    const [recordDate, setRecordDate] = useState(new Date());
-    const [creationDate,setCreationDate]=useState(null);
     const [isFetch, setIsFetch] = useState(false);
-    const [recordID, setRecordID] = useState(null);
+    const [passwordID, setPasswordID] = useState(null);
     const [userid] = useState(supabase.auth.user());
-    const [listRecords,setListRecords]=useState(null);
+    const [listPassword,setListPassword]=useState(null);
+    const [configuracion,cambiarConfiguracion] = useState({
+        numeroDeCaracteres:8,
+        simbolos: true,
+        numeros: true,
+        mayusculas: true
+      });
+      const [site, setSite] = useState(null);
+      const [password, setPassword] = useState(null);
+      const[paswordGenerada,cambiarPaswordGenerada]= useState(' ');
+      const saltRounds = 10;
     useEffect(() => {
         if (avatar_url) downloadImage(avatar_url)
         getProfile()
         listrecord()
     }, [session, avatar_url, isFetch])
+    
 
 
     async function downloadImage(path) {
@@ -64,9 +76,9 @@ export default function Account({ session }) {
     async function deleteRecord() {
         try {
             const { error } = await supabase
-                .from('recordatorios')
+                .from('Password')
                 .delete()
-                .eq('id', recordID)
+                .eq('id', passwordID)
             if (error) {
                 throw error
             } else {
@@ -107,21 +119,16 @@ export default function Account({ session }) {
         }
     }
 
-    async function insertRecord({ title, content, reminder }) {
-        if (recordID !== null && recordID !== "") {
+    async function insertRecord({ site, password }) {
+        if (passwordID !== null && passwordID !== "") {
             updateReminder();
         } else {
             try {
-
                 const updates = {
-                    user: userid.id,
-                    title,
-                    content,
-                    reminder_date: recordDate,
-                    created_at: new Date(),
+                    site,
+                    password,
                 }
-
-                let { error } = await supabase.from('recordatorios').insert(updates, {
+                let { error } = await supabase.from('Password').insert(updates, {
                     returning: 'minimal', // Don't return the value after inserting
                 })
 
@@ -145,15 +152,13 @@ export default function Account({ session }) {
             const user = userid
 
             const updates = {
-                id: recordID,
+                id: passwordID,
                 user: user.id,
-                title: title,
-                content: content,
-                reminder_date: recordDate,
-                created_at: new Date(),
+                site: site,
+                password: password
             }
 
-            let { error } = await supabase.from('recordatorios').upsert(updates, {
+            let { error } = await supabase.from('Password').upsert(updates, {
                 returning: 'minimal', // Don't return the value after inserting
             })
 
@@ -174,7 +179,7 @@ export default function Account({ session }) {
             const user = supabase.auth.user()
 
             let { data, error, status } = await supabase
-                .from('recordatorios')
+                .from('Password')
                 .select(`*`)
                 .eq('user', user.id)
 
@@ -184,7 +189,7 @@ export default function Account({ session }) {
             }
 
             if (data) {
-                setListRecords(data);
+                setListPassword(data);
 
             }
         } catch (error) {
@@ -198,9 +203,9 @@ export default function Account({ session }) {
         try {
 
             let { data, error, status } = await supabase
-                .from('recordatorios')
+                .from('Password')
                 .select(`*`)
-                .eq('id', recordID)
+                .eq('id', passwordID)
                 .single()
 
             if (error && status !== 406) {
@@ -208,10 +213,8 @@ export default function Account({ session }) {
             }
 
             if (data) {
-                setTitle(data.title);
-                setContent(data.content);
-                setRecordDate(data.reminder_date);
-                setCreationDate(data.created_at);
+                setSite(data.site);
+                setPassword(data.password);
             }
         } catch (error) {
             alert(error.message)
@@ -225,6 +228,59 @@ export default function Account({ session }) {
         localStorage.setItem('i18nextLng', actual==="es" ? "en":"es");
         window.location.reload(false);
     }
+   
+      const incrementarNumeroCaracteres =()=>{
+        if(configuracion.numeroDeCaracteres <16){
+        cambiarConfiguracion((configurcionAnterior)=>{
+          const NuevaConfiguracion ={...configurcionAnterior}
+          NuevaConfiguracion.numeroDeCaracteres +=1;
+          return NuevaConfiguracion;
+        });
+      }
+      };
+    
+      const disminuirNumeroCaracteres =()=>{
+        if(configuracion.numeroDeCaracteres >8){
+          cambiarConfiguracion((configurcionAnterior)=>{
+            const NuevaConfiguracion ={...configurcionAnterior}
+            NuevaConfiguracion.numeroDeCaracteres -=1;
+            return NuevaConfiguracion;
+          });
+        }
+        
+      };
+    
+      const toggleSimbolos=()=>{
+        cambiarConfiguracion((configurcionAnterior)=>{
+          const NuevaConfiguracion ={...configurcionAnterior}
+          NuevaConfiguracion.simbolos= !NuevaConfiguracion.simbolos;
+          return NuevaConfiguracion;
+        });
+      };
+    
+      const toggleNumeros=()=>{
+        cambiarConfiguracion((configurcionAnterior)=>{
+          const NuevaConfiguracion ={...configurcionAnterior}
+          NuevaConfiguracion.numeros= !NuevaConfiguracion.numeros;
+          return NuevaConfiguracion;
+        });
+      };
+    
+      const toggleMayusculas=()=>{
+        cambiarConfiguracion((configurcionAnterior)=>{
+          const NuevaConfiguracion ={...configurcionAnterior}
+          NuevaConfiguracion.mayusculas = !NuevaConfiguracion.mayusculas;
+          return NuevaConfiguracion;
+        });
+      };
+    
+      const onSubmit =(e)=>{
+        e.preventDefault();
+        cambiarPaswordGenerada(generarPassword(configuracion))
+        bcrypt.hash(paswordGenerada, saltRounds, function(err, hash) {
+          setPassword(hash) 
+        });    
+      };
 
     return (
         <div className="form-widget">
@@ -282,36 +338,52 @@ export default function Account({ session }) {
                 </button>
             </div>
 
-            <h1>{i18next.t("field8")}</h1>
-            <div>
-                <label htmlFor="title">{i18next.t("field4")}</label>
-                <input id="title" type="text" value={title || ''} onChange={(e) => setTitle(e.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="content">{i18next.t("field5")}</label>
-                <input id="content" type="text" value={content || ''} onChange={(e) => setContent(e.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="reminderdate">{i18next.t("field6")}</label>
-                <input id="reminderdate" type="date" value={recordDate} onChange={(e) => setRecordDate(e.target.value)} />
-            </div>
-
-            <div>
-                <label htmlFor="creationDate">Fecha de creacion</label>
-                <input id="creationDate" type="text" value={creationDate} onChange={(e) => setCreationDate(e.target.value)} disabled={true}/>
-            </div>
-            <div >
+    <div className='contenedor'>
+      <form onSubmit={onSubmit}>
+        <Fila>
+          <label>{i18next.t("field4")}</label>
+          <Controles>
+            <BotonDisminuir click={disminuirNumeroCaracteres}></BotonDisminuir>
+            <span>{configuracion.numeroDeCaracteres}</span>
+            <BotonIncrementar click={incrementarNumeroCaracteres}></BotonIncrementar>
+          </Controles>
+        </Fila>
+        <Fila>
+          <label>{i18next.t("field5")}</label>
+          <BotonCheck seleccionado={configuracion.simbolos} click={toggleSimbolos}></BotonCheck>
+        </Fila>
+        <Fila>
+          <label>{i18next.t("field6")}</label>
+          <BotonCheck seleccionado={configuracion.numeros} click={toggleNumeros}></BotonCheck>
+        </Fila>
+        <Fila>
+          <label>{i18next.t("field7")}</label>
+          <BotonCheck seleccionado={configuracion.mayusculas} click={toggleMayusculas}></BotonCheck>
+        </Fila>
+        <Fila>
+          <label>{i18next.t("field10")}</label>
+          <Input id="site" type="text" onChange={(e) => setSite(e.target.value)}></Input>
+        </Fila>
+        <Fila>
+            <BotonGenerar></BotonGenerar>
+            <label>{i18next.t("field11")}</label>
+            <Input id="password" type="text" value={paswordGenerada}></Input>
+        </Fila>
+        
+        </form>
+    </div>    
+        <div >
                 <label htmlFor="idfield">id</label>
-                <input id="idfield" type="text" onChange={(e) => setRecordID(e.target.value)} />
+                <input id="idfield" type="text" onChange={(e) => setPasswordID(e.target.value)} />
 
                 <button className="button primary block" onClick={() => getRecord()}>{i18next.t("button4")}</button>
             </div>
 
             <button
                 className="button block primary"
-                onClick={() => insertRecord({ title, content, reminderdate: recordDate })}
+                onClick={() => insertRecord({ site, password})}
             >
-                {recordID !== null && recordID !== "" ? i18next.t("button5v2") : i18next.t("button5")}
+                {passwordID !== null && passwordID !== "" ? i18next.t("button5v2") : i18next.t("button5")}
             </button>
            <button
                 className="button block primary"
@@ -321,7 +393,7 @@ export default function Account({ session }) {
             </button>
 
             <h1>{i18next.t("field9")}</h1>
-            {listRecords!== null ? listRecords.map((t) => <li key={t.id}> {i18next.t("record1")} {t.id} {i18next.t("record2")} {t.title} - {i18next.t("record3")} {t.content} - {i18next.t("record4")} {t.reminder} - {i18next.t("record5")} {t.created_at} -</li>):""}
+            {listPassword!== null ? listPassword.map((t) => <li key={t.id}> {i18next.t("record1")} {t.id} {i18next.t("record2")} {t.site} - {i18next.t("record3")} {t.password} - {i18next.t("record5")} {t.created_at} -</li>):""}
 
             <div>
                 <button className="button primary block"  onClick={() => changeLanguage()} >{i18next.t("lan")}</button>
@@ -329,3 +401,49 @@ export default function Account({ session }) {
         </div>
     )
 }
+
+
+const Fila =styled.div`
+margin-bottom: 40px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+  gap:10px;
+`
+const Controles = styled.div`
+  display: flex;
+  justify-content: space-between;
+  text-aling: center;
+
+  & > *{
+    flex: 1;
+  }
+  span{
+    line-height: 40px;
+    background: #fff;
+    color: black;
+    
+  }
+`;
+
+const Input = styled.input`
+  width: 100%;
+  background: none;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255, .25);
+  color: #fff;
+  height: 40px
+  line-heigth: 40px;
+  cursor: pointer;
+  transition: all .3s ease;
+
+  &:hover {
+    border: 1px solid rgba(255,255,255, .50);
+  }
+  &::selection {
+    background: #212159;
+  }
+
+  &::-moz-selection {
+    backgrond: #212159;
+  }
+`;

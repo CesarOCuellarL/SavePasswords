@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from './config/supabase'
 import Auth from './components/auth'
 import Account from './components/profile'
+import React from 'react'
 
 
 export default function Home() {

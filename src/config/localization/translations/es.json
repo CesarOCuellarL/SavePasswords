@@ -17,18 +17,18 @@
     "footertable":"Filas por pagina: ",
     "padding":"Espaciado denso",
     "button4":"Buscar",
-    "field4":"Título",
-    "field5":"Contenido",
-    "field6":"Fecha de aviso",
-    "field7":"Fecha de alta",
+    "field4":"Numero de Caracteres",
+    "field5":"¿Incluir Simbolos?",
+    "field6":"¿Incluir Numeros?",
+    "field7":"¿Incluir Mayusculas?",
+    "field10":"Sitio",
+    "field11":"Contraseña",
     "button5":"Insertar",
     "button5v2":"Guardar",
     "button6":"Eliminar",
     "field8":"Buscar y modificar recordatorios",
     "record1":"Identificador:",
-    "record2":"Titulo:",
-    "record3":"Contenido:",
-    "record4":"Fecha de recordatorio:",
+    "record2":"Sitio:",
+    "record3":"Contraseña:",
     "record5":"Fecha de creacion:"
-
-}
+} 
