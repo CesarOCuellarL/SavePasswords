@@ -190,7 +190,6 @@ export default function Account({ session }) {
 
             if (data) {
                 setListPassword(data);
-
             }
         } catch (error) {
             alert(error.message)
@@ -393,8 +392,8 @@ export default function Account({ session }) {
             </button>
 
             <h1>Lista de Registros</h1>
-            {listPassword!== null ? listPassword.map((t) => <li key={t.id}> Identificador: {t.id} Sitio: {t.site} - Contraseña: {t.password} - Fecha de creacion: {t.created_at} -</li>):""}
-
+            {listPassword!== null ? listPassword.map((t) => <li key={t.id}> Identificador: {t.id} Sitio: {t.site} - Contraseña: {t.password} - </li>):""}
+            
             <div>
                 <button className="button primary block"  onClick={() => changeLanguage()} >ES-MX</button>
             </div>
