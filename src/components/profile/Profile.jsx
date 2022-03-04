@@ -1,4 +1,4 @@
-import i18next from '../../config/localization/i18n';
+//import i18next from '../../config/localization/i18n';
 import React, { useState, useEffect } from 'react';
 import Avatar from "../avatar";
 import { supabase } from '../../config/supabase';
@@ -287,7 +287,7 @@ export default function Account({ session }) {
 
 
 
-            <h1>{i18next.t("title1")}</h1>
+            <h1>ACTUALIZAR PERFIL</h1>
 
 
             <Avatar
@@ -301,11 +301,11 @@ export default function Account({ session }) {
 
 
             <div>
-                <label htmlFor="email">{i18next.t("field1")}</label>
+                <label htmlFor="email">Correo electronico</label>
                 <input id="email" type="text" value={session.user.email} disabled />
             </div>
             <div>
-                <label htmlFor="username">{i18next.t("field2")}</label>
+                <label htmlFor="username">Nombre completo</label>
                 <input
                     id="username"
                     type="text"
@@ -314,7 +314,7 @@ export default function Account({ session }) {
                 />
             </div>
             <div>
-                <label htmlFor="website">{i18next.t("field3")}</label>
+                <label htmlFor="website">Sitio web</label>
                 <input
                     id="website"
                     type="website"
@@ -328,20 +328,20 @@ export default function Account({ session }) {
                     className="button block primary"
                     onClick={() => updateProfile({ username, website, avatar_url })}
                     disabled={loading}>
-                    {loading ? 'Loading ...' : i18next.t("button2")}
+                    Actualizar
                 </button>
             </div>
 
             <div>
                 <button className="button block" onClick={() => supabase.auth.signOut()}>
-                    {i18next.t("button3")}
+                    Cerrar Sesión
                 </button>
             </div>
 
     <div className='contenedor'>
       <form onSubmit={onSubmit}>
         <Fila>
-          <label>{i18next.t("field4")}</label>
+          <label>Numero de Caracteres</label>
           <Controles>
             <BotonDisminuir click={disminuirNumeroCaracteres}></BotonDisminuir>
             <span>{configuracion.numeroDeCaracteres}</span>
@@ -349,24 +349,24 @@ export default function Account({ session }) {
           </Controles>
         </Fila>
         <Fila>
-          <label>{i18next.t("field5")}</label>
+          <label>¿Incluir Simbolos?</label>
           <BotonCheck seleccionado={configuracion.simbolos} click={toggleSimbolos}></BotonCheck>
         </Fila>
         <Fila>
-          <label>{i18next.t("field6")}</label>
+          <label>¿Incluir Numeros?</label>
           <BotonCheck seleccionado={configuracion.numeros} click={toggleNumeros}></BotonCheck>
         </Fila>
         <Fila>
-          <label>{i18next.t("field7")}</label>
+          <label>¿Incluir Mayusculas?</label>
           <BotonCheck seleccionado={configuracion.mayusculas} click={toggleMayusculas}></BotonCheck>
         </Fila>
         <Fila>
-          <label>{i18next.t("field10")}</label>
+          <label>Sitio</label>
           <Input id="site" type="text" onChange={(e) => setSite(e.target.value)}></Input>
         </Fila>
         <Fila>
             <BotonGenerar></BotonGenerar>
-            <label>{i18next.t("field11")}</label>
+            <label>Contraseña</label>
             <Input id="password" type="text" value={paswordGenerada}></Input>
         </Fila>
         
@@ -376,27 +376,27 @@ export default function Account({ session }) {
                 <label htmlFor="idfield">id</label>
                 <input id="idfield" type="text" onChange={(e) => setPasswordID(e.target.value)} />
 
-                <button className="button primary block" onClick={() => getRecord()}>{i18next.t("button4")}</button>
+                <button className="button primary block" onClick={() => getRecord()}>Buscar</button>
             </div>
 
             <button
                 className="button block primary"
                 onClick={() => insertRecord({ site, password})}
             >
-                {passwordID !== null && passwordID !== "" ? i18next.t("button5v2") : i18next.t("button5")}
+                Insertar
             </button>
            <button
                 className="button block primary"
                 onClick={() => deleteRecord()}
             >
-                {i18next.t("button6")}
+                Eliminar
             </button>
 
-            <h1>{i18next.t("field9")}</h1>
-            {listPassword!== null ? listPassword.map((t) => <li key={t.id}> {i18next.t("record1")} {t.id} {i18next.t("record2")} {t.site} - {i18next.t("record3")} {t.password} - {i18next.t("record5")} {t.created_at} -</li>):""}
+            <h1>Lista de Registros</h1>
+            {listPassword!== null ? listPassword.map((t) => <li key={t.id}> Identificador: {t.id} Sitio: {t.site} - Contraseña: {t.password} - Fecha de creacion: {t.created_at} -</li>):""}
 
             <div>
-                <button className="button primary block"  onClick={() => changeLanguage()} >{i18next.t("lan")}</button>
+                <button className="button primary block"  onClick={() => changeLanguage()} >ES-MX</button>
             </div>
         </div>
     )
