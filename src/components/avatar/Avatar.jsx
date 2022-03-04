@@ -69,7 +69,7 @@ export default function Avatar({ url, size, onUpload }) {
             )}
             <div style={{ width: size }}>
                 <label className="button primary block" htmlFor="single">
-                    {uploading ? 'Uploading ...' : i18next.t("button1")}
+                    Subir
                 </label>
                 <input
                     style={{
