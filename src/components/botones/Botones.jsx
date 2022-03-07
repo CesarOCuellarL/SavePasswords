@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-
 export const BotonDisminuir=({click}) => {
     return(
         <Boton onClick={click}>
@@ -57,7 +56,7 @@ export const BotonGenerar=()=>{
 
 const Boton = styled.button`
   width:100%;
-  background: #B2FF33;
+  background: #2448b4;
   color: #ff f
   diplay: inline-flex;
   aling-items: center;

@@ -5,7 +5,8 @@ import { supabase } from '../../config/supabase';
 import styled from 'styled-components';
 import {BotonDisminuir,BotonIncrementar,BotonCheck, BotonGenerar} from '../botones';
 import generarPassword from '../../funciones/generarpassword';
-import md5 from 'js-md5';
+import CryptoJS from "crypto-js";
+//import validator from "validator";
 
 export default function Account({ session }) {
     const [loading, setLoading] = useState(true)
@@ -19,12 +20,25 @@ export default function Account({ session }) {
     const [site, setSite] = useState(null);
     const [password, setPassword] = useState(null);
     const[passwordGenerada,cambiarPasswordGenerada]= useState(' ');
+    //const [errorMessage, setErrorMessage] = useState('')
     const [configuracion,cambiarConfiguracion] = useState({
         numeroDeCaracteres:8,
         simbolos: true,
         numeros: true,
         mayusculas: true
-      });  
+      });
+    //   const validate = (value) => {
+  
+    //     if (validator.isStrongPassword(value, {
+    //       minLength: 8, minLowercase: 1,
+    //       minUppercase: 1, minNumbers: 1, minSymbols: 1
+    //     })) {
+    //       setErrorMessage('Is Strong Password')
+    //     } else {
+    //       setErrorMessage('Is Not Strong Password')
+    //     }
+    //   }
+    let key = 'generadorpassword@utags.edu.mx';  
     useEffect(() => {
         if (avatar_url) downloadImage(avatar_url)
         getProfile()
@@ -275,7 +289,7 @@ export default function Account({ session }) {
       const onSubmit =(e)=>{
         e.preventDefault();
         cambiarPasswordGenerada(generarPassword(configuracion))
-        setPassword(md5(passwordGenerada))   
+        setPassword(CryptoJS.AES.encrypt(passwordGenerada, key).toString()) 
       };
 
     return (
@@ -363,7 +377,8 @@ export default function Account({ session }) {
         </Fila>
         <Fila>
             <label>{i18next.t("field11")}</label>
-            <Input id="password" type="text" value={passwordGenerada} readOnly={false}></Input>
+            <Input id="password" type="text" value={passwordGenerada}></Input>
+            <label>Estado de la contraseña: </label>
         </Fila>
         <Fila>
             <BotonGenerar></BotonGenerar>
