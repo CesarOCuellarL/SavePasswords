@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { supabase } from '../../config/supabase'
-import React from 'react'
 
 export default function Auth() {
     const [loading, setLoading] = useState(false)
@@ -23,7 +22,7 @@ export default function Auth() {
         <div className="row flex flex-center">
             
             <div className="col-6 form-widget">
-            <a className="Header" href='https://github.com/Ceslusbel/SavePasswords'>GitHub</a>
+            <a className="Header" href='https://github.com/Ceslusbel/Recordatorios'>GitHub</a>
                 <p className="description">Sign in via magic link with your email below</p>
                 <div>
                     <input

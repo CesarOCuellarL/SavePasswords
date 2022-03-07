@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../config/supabase'
-//import i18next from '../../config/localization/i18n';
-import React from 'react';
+import i18next from '../../config/localization/i18n';
 
 export default function Avatar({ url, size, onUpload }) {
     const [avatarUrl, setAvatarUrl] = useState(null)
@@ -69,7 +68,7 @@ export default function Avatar({ url, size, onUpload }) {
             )}
             <div style={{ width: size }}>
                 <label className="button primary block" htmlFor="single">
-                    Subir
+                    {uploading ? 'Uploading ...' : i18next.t("button1")}
                 </label>
                 <input
                     style={{

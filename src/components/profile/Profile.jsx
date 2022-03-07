@@ -1,12 +1,11 @@
-//import i18next from '../../config/localization/i18n';
-import React, { useState, useEffect } from 'react';
+import i18next from '../../config/localization/i18n';
+import { useState, useEffect } from 'react';
 import Avatar from "../avatar";
 import { supabase } from '../../config/supabase';
 import styled from 'styled-components';
 import {BotonDisminuir,BotonIncrementar,BotonCheck, BotonGenerar} from '../botones';
-import generarPassword from '../../funciones/generarPassword';
-import bcrypt from 'bcryptjs';
-
+import generarPassword from '../../funciones/generarpassword';
+import md5 from 'js-md5';
 
 export default function Account({ session }) {
     const [loading, setLoading] = useState(true)
@@ -17,22 +16,20 @@ export default function Account({ session }) {
     const [passwordID, setPasswordID] = useState(null);
     const [userid] = useState(supabase.auth.user());
     const [listPassword,setListPassword]=useState(null);
+    const [site, setSite] = useState(null);
+    const [password, setPassword] = useState(null);
+    const[passwordGenerada,cambiarPasswordGenerada]= useState(' ');
     const [configuracion,cambiarConfiguracion] = useState({
         numeroDeCaracteres:8,
         simbolos: true,
         numeros: true,
         mayusculas: true
-      });
-      const [site, setSite] = useState(null);
-      const [password, setPassword] = useState(null);
-      const[paswordGenerada,cambiarPaswordGenerada]= useState(' ');
-      const saltRounds = 10;
+      });  
     useEffect(() => {
         if (avatar_url) downloadImage(avatar_url)
         getProfile()
         listrecord()
     }, [session, avatar_url, isFetch])
-    
 
 
     async function downloadImage(path) {
@@ -125,8 +122,10 @@ export default function Account({ session }) {
         } else {
             try {
                 const updates = {
+                    user: userid.id,
                     site,
                     password,
+                    created_at: new Date(),
                 }
                 let { error } = await supabase.from('Password').insert(updates, {
                     returning: 'minimal', // Don't return the value after inserting
@@ -227,8 +226,8 @@ export default function Account({ session }) {
         localStorage.setItem('i18nextLng', actual==="es" ? "en":"es");
         window.location.reload(false);
     }
-   
-      const incrementarNumeroCaracteres =()=>{
+
+    const incrementarNumeroCaracteres =()=>{
         if(configuracion.numeroDeCaracteres <16){
         cambiarConfiguracion((configurcionAnterior)=>{
           const NuevaConfiguracion ={...configurcionAnterior}
@@ -275,10 +274,8 @@ export default function Account({ session }) {
     
       const onSubmit =(e)=>{
         e.preventDefault();
-        cambiarPaswordGenerada(generarPassword(configuracion))
-        bcrypt.hash(paswordGenerada, saltRounds, function(err, hash) {
-          setPassword(hash) 
-        });    
+        cambiarPasswordGenerada(generarPassword(configuracion))
+        setPassword(md5(passwordGenerada))   
       };
 
     return (
@@ -286,7 +283,7 @@ export default function Account({ session }) {
 
 
 
-            <h1>ACTUALIZAR PERFIL</h1>
+            <h1>{i18next.t("title1")}</h1>
 
 
             <Avatar
@@ -300,11 +297,11 @@ export default function Account({ session }) {
 
 
             <div>
-                <label htmlFor="email">Correo electronico</label>
+                <label htmlFor="email">{i18next.t("field1")}</label>
                 <input id="email" type="text" value={session.user.email} disabled />
             </div>
             <div>
-                <label htmlFor="username">Nombre completo</label>
+                <label htmlFor="username">{i18next.t("field2")}</label>
                 <input
                     id="username"
                     type="text"
@@ -313,7 +310,7 @@ export default function Account({ session }) {
                 />
             </div>
             <div>
-                <label htmlFor="website">Sitio web</label>
+                <label htmlFor="website">{i18next.t("field3")}</label>
                 <input
                     id="website"
                     type="website"
@@ -327,20 +324,21 @@ export default function Account({ session }) {
                     className="button block primary"
                     onClick={() => updateProfile({ username, website, avatar_url })}
                     disabled={loading}>
-                    Actualizar
+                    {loading ? 'Loading ...' : i18next.t("button2")}
                 </button>
             </div>
 
             <div>
                 <button className="button block" onClick={() => supabase.auth.signOut()}>
-                    Cerrar Sesión
+                    {i18next.t("button3")}
                 </button>
             </div>
 
-    <div className='contenedor'>
+            <h1>{i18next.t("field8")}</h1>
+            <div className='contenedor'>
       <form onSubmit={onSubmit}>
         <Fila>
-          <label>Numero de Caracteres</label>
+          <label>{i18next.t("field4")}</label>
           <Controles>
             <BotonDisminuir click={disminuirNumeroCaracteres}></BotonDisminuir>
             <span>{configuracion.numeroDeCaracteres}</span>
@@ -348,25 +346,27 @@ export default function Account({ session }) {
           </Controles>
         </Fila>
         <Fila>
-          <label>¿Incluir Simbolos?</label>
+          <label>{i18next.t("field5")}</label>
           <BotonCheck seleccionado={configuracion.simbolos} click={toggleSimbolos}></BotonCheck>
         </Fila>
         <Fila>
-          <label>¿Incluir Numeros?</label>
+          <label>{i18next.t("field6")}</label>
           <BotonCheck seleccionado={configuracion.numeros} click={toggleNumeros}></BotonCheck>
         </Fila>
         <Fila>
-          <label>¿Incluir Mayusculas?</label>
+          <label>{i18next.t("field7")}</label>
           <BotonCheck seleccionado={configuracion.mayusculas} click={toggleMayusculas}></BotonCheck>
         </Fila>
         <Fila>
-          <label>Sitio</label>
+          <label>{i18next.t("field10")}</label>
           <Input id="site" type="text" onChange={(e) => setSite(e.target.value)}></Input>
         </Fila>
         <Fila>
+            <label>{i18next.t("field11")}</label>
+            <Input id="password" type="text" value={passwordGenerada} readOnly={false}></Input>
+        </Fila>
+        <Fila>
             <BotonGenerar></BotonGenerar>
-            <label>Contraseña</label>
-            <Input id="password" type="text" value={paswordGenerada}></Input>
         </Fila>
         
         </form>
@@ -375,32 +375,31 @@ export default function Account({ session }) {
                 <label htmlFor="idfield">id</label>
                 <input id="idfield" type="text" onChange={(e) => setPasswordID(e.target.value)} />
 
-                <button className="button primary block" onClick={() => getRecord()}>Buscar</button>
+                <button className="button primary block" onClick={() => getRecord()}>{i18next.t("button4")}</button>
             </div>
 
             <button
                 className="button block primary"
                 onClick={() => insertRecord({ site, password})}
             >
-                Insertar
+                {passwordID !== null && passwordID !== "" ? i18next.t("button5v2") : i18next.t("button5")}
             </button>
            <button
                 className="button block primary"
                 onClick={() => deleteRecord()}
             >
-                Eliminar
+                {i18next.t("button6")}
             </button>
 
-            <h1>Lista de Registros</h1>
-            {listPassword!== null ? listPassword.map((t) => <li key={t.id}> Identificador: {t.id} Sitio: {t.site} - Contraseña: {t.password} - </li>):""}
-            
+            <h1>{i18next.t("field9")}</h1>
+            {listPassword!== null ? listPassword.map((t) => <li key={t.id}> {i18next.t("record1")} {t.id} {i18next.t("record2")} {t.site} - {i18next.t("record3")} {t.password} - </li>):""}
+
             <div>
-                <button className="button primary block"  onClick={() => changeLanguage()} >ES-MX</button>
+                <button className="button primary block"  onClick={() => changeLanguage()} >{i18next.t("lan")}</button>
             </div>
         </div>
     )
 }
-
 
 const Fila =styled.div`
 margin-bottom: 40px;
