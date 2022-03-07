@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import {BotonDisminuir,BotonIncrementar,BotonCheck, BotonGenerar} from '../botones';
 import generarPassword from '../../funciones/generarpassword';
 import CryptoJS from "crypto-js";
-//import validator from "validator";
+import validator from "validator";
 
 export default function Account({ session }) {
     const [loading, setLoading] = useState(true)
@@ -20,24 +20,25 @@ export default function Account({ session }) {
     const [site, setSite] = useState(null);
     const [password, setPassword] = useState(null);
     const[passwordGenerada,cambiarPasswordGenerada]= useState(' ');
-    //const [errorMessage, setErrorMessage] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
     const [configuracion,cambiarConfiguracion] = useState({
         numeroDeCaracteres:8,
         simbolos: true,
         numeros: true,
-        mayusculas: true
+        mayusculas: true,
+        show: true
       });
-    //   const validate = (value) => {
+       const validate = (value) => {
   
-    //     if (validator.isStrongPassword(value, {
-    //       minLength: 8, minLowercase: 1,
-    //       minUppercase: 1, minNumbers: 1, minSymbols: 1
-    //     })) {
-    //       setErrorMessage('Is Strong Password')
-    //     } else {
-    //       setErrorMessage('Is Not Strong Password')
-    //     }
-    //   }
+         if (validator.isStrongPassword(value, {
+           minLength: 8, minLowercase: 1,
+           minUppercase: 1, minNumbers: 1, minSymbols: 1
+         })) {
+           setErrorMessage(i18next.t("error1"))
+         } else {
+           setErrorMessage(i18next.t("error2"))
+         }
+       }
     let key = 'generadorpassword@utags.edu.mx';  
     useEffect(() => {
         if (avatar_url) downloadImage(avatar_url)
@@ -285,10 +286,19 @@ export default function Account({ session }) {
           return NuevaConfiguracion;
         });
       };
+
+      const toggleShow=()=>{
+        cambiarConfiguracion((configurcionAnterior)=>{
+          const NuevaConfiguracion ={...configurcionAnterior}
+          NuevaConfiguracion.show = !NuevaConfiguracion.show;
+          return NuevaConfiguracion;
+        });
+      };
     
       const onSubmit =(e)=>{
         e.preventDefault();
         cambiarPasswordGenerada(generarPassword(configuracion))
+        validate(passwordGenerada)
         setPassword(CryptoJS.AES.encrypt(passwordGenerada, key).toString()) 
       };
 
@@ -377,8 +387,8 @@ export default function Account({ session }) {
         </Fila>
         <Fila>
             <label>{i18next.t("field11")}</label>
-            <Input id="password" type="text" value={passwordGenerada}></Input>
-            <label>Estado de la contraseña: </label>
+            <Input id="password" type="text" onChange={(e) => setSite(e.target.value)} value={passwordGenerada}></Input>
+            <label>{i18next.t("field13")} {errorMessage}</label>
         </Fila>
         <Fila>
             <BotonGenerar></BotonGenerar>
@@ -407,8 +417,11 @@ export default function Account({ session }) {
             </button>
 
             <h1>{i18next.t("field9")}</h1>
-            {listPassword!== null ? listPassword.map((t) => <li key={t.id}> {i18next.t("record1")} {t.id} {i18next.t("record2")} {t.site} - {i18next.t("record3")} {t.password} - </li>):""}
-
+            {listPassword!== null ? listPassword.map((t) => <li key={t.id}> {i18next.t("record1")} {t.id} {i18next.t("record2")} {t.site} - {i18next.t("record3")} {configuracion.show=true ? t.password : CryptoJS.DES.decrypt(t.password, key).toString(CryptoJS.enc.Utf8) } - </li>):""}
+            <Fila>
+                <label>{i18next.t("field12")}</label>
+                <BotonCheck seleccionado={configuracion.show} click={toggleShow}></BotonCheck>
+            </Fila>
             <div>
                 <button className="button primary block"  onClick={() => changeLanguage()} >{i18next.t("lan")}</button>
             </div>

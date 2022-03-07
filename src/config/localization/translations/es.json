@@ -23,6 +23,8 @@
     "field7":"¿Incluir Mayusculas?",
     "field10":"Sitio",
     "field11":"Contraseña",
+    "field12":"Ocultar Contraseña",
+    "field13":"Estado de la contraseña:",
     "button5":"Insertar",
     "button5v2":"Guardar",
     "button6":"Eliminar",
@@ -31,5 +33,7 @@
     "record1":"Identificador:",
     "record2":"Sitio:",
     "record3":"Contraseña:",
-    "record5":"Fecha de creacion:"
+    "record5":"Fecha de creacion:",
+    "error1":"Es una Contraseña Segura",
+    "error2":"No es una Contraseña Segura"
 } 

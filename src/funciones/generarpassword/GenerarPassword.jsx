@@ -26,4 +26,5 @@ const generarPassword=(configuracion)=>{
 
 	return password;
 }
+
 export default generarPassword;
