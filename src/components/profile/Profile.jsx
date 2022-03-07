@@ -418,10 +418,12 @@ export default function Account({ session }) {
 
             <h1>{i18next.t("field9")}</h1>
             {listPassword!== null ? listPassword.map((t) => <li key={t.id}> {i18next.t("record1")} {t.id} {i18next.t("record2")} {t.site} - {i18next.t("record3")} {configuracion.show=true ? t.password : CryptoJS.DES.decrypt(t.password, key).toString(CryptoJS.enc.Utf8) } - </li>):""}
+            <form onSubmit={onSubmit}>
             <Fila>
                 <label>{i18next.t("field12")}</label>
                 <BotonCheck seleccionado={configuracion.show} click={toggleShow}></BotonCheck>
             </Fila>
+            </form>
             <div>
                 <button className="button primary block"  onClick={() => changeLanguage()} >{i18next.t("lan")}</button>
             </div>
